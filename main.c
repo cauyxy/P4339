@@ -410,12 +410,15 @@ int InitUserinformation(U *s)
             return ERROR;
         }
 
+        s->UserFile=fp;
+        s->length=0;
+        WriteUserCount(s);
     }
 
 
     s->UserFile=fp;
-    s->length=0;
-    WriteUserCount(s);
+    rewind(fp);
+    fread(&s->length,sizeof(int),1,fp);;
 
     return 0;
 }
@@ -428,6 +431,8 @@ int WriteUserCount(U *s)
     int i;
     rewind(s->UserFile);
     i=fwrite(&s->length,sizeof(int),1,s->UserFile); //s->length  È»ºó*s->length
+
+    fflush(s->UserFile);
 
     if(i==0)
     {
@@ -458,6 +463,8 @@ int WriteUser(U *s,int idex,Uinf *u,char n[])
 
     fseek(s->UserFile,sizeof(int)+sizeof(Uinf)*idex,SEEK_SET);
     i=fwrite(u,sizeof(Uinf),1,s->UserFile);
+
+    fflush(s->UserFile);
 
     if(i==0)
     {
@@ -560,6 +567,8 @@ int WriteMall(U *s,int idex,Uinf *u,char n[])
 
     fseek(s->UserFile,sizeof(int)+sizeof(Uinf)*idex,SEEK_SET);
     i=fwrite(u,sizeof(Uinf),1,s->UserFile);
+
+    fflush(s->UserFile);
 
     if(i==0)
     {
